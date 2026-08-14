@@ -1,12 +1,7 @@
 
 import streamlit as st 
 st.title("AI Chatbot")
-try:
-    from chat_bot import llm
-    st.success("LLM loaded successfully")
-except Exception as e:
-    st.error(f"Failed to load chat_bot.py: {e}")
-    st.exception(e)
+from chat_bot import llm
 from langchain_core.messages import HumanMessage
 
 CONFIG = {
