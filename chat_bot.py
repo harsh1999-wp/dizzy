@@ -14,7 +14,7 @@ print(os.getenv("GROQ_API_KEY"))
 
 #llm initilization
 llm = ChatGroq(
-    model="llama-3.3-70b-versatile",
+    model="groq/compound",
     temperature=0
 )
 
@@ -43,23 +43,33 @@ graph.add_edge('chatMessage',END)
 
 workflow = graph.compile(checkpointer=checkpointer)
 
+stream = workflow.stream(
+    {'messages': [HumanMessage(content='What is cricket')]},
+    config = {'configurable' : {'threadid' : 'thread-1'}},
+    stream_mode='messages'
+)
+print(type(stream))
+
 initial_state ={
     'messages' : [HumanMessage(content='what is the capital of India')]
 }
 #result= workflow.invoke(initial_state)['messages'][-1].content
-
-#print(result)
-thread_id = '1'
-while True:
+def main ():
+    thread_id = '1'
+    while True:
     
-    user_message = input('Type here:')
+        user_message = input('Type here:')
 
-    print(user_message)
+        print(user_message)
 
-    if user_message.strip().lower() in ['exit' , 'bye' ,'quit']:
-        break
+        if user_message.strip().lower() in ['exit' , 'bye' ,'quit']:
+            break
 
-    config = {'configurable': {'thread_id': thread_id}}   
-    response = workflow.invoke({'messages': [HumanMessage(content = user_message)]} , config  = config)
+        config = {'configurable': {'thread_id': thread_id}}   
+        response = workflow.invoke({'messages': [HumanMessage(content = user_message)]} , config  = config)
 
-    print('AI:',response['messages'][-1].content)
+        print('AI:',response['messages'][-1].content)
+    #print(result)
+
+if __name__ == "__main__":
+    main()
